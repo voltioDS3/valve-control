@@ -5,10 +5,12 @@
 #include <WebServer.h>
 #include <ArduinoJson.h>
 #include "pins.h"
+#include "valve.h"
+
 void setupWebServer();
 void runServer();
 
-
+void toggleDashboard();
 const char PAGE_MAIN[] PROGMEM = R"=====(
 
 <!DOCTYPE html>
