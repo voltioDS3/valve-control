@@ -16,8 +16,8 @@ void handleValveStates(){
     for (int i = 0; i < valve_count; i++) {
         Serial.print("valvula ");
         Serial.print(i);
-        Serial.print(valve_array[i]->getState());
-        states.add(valve_array[i]->getState());
+        Serial.print(valves[i]->getState());
+        states.add(valves[i]->getState());
     }
     String jsonResponse;
     serializeJson(doc, jsonResponse);
@@ -31,9 +31,9 @@ void handleToggleValve() {
     if (server.hasArg("valve")) {
         int valveIndex = server.arg("valve").toInt();
         if (valveIndex >= 0 && valveIndex < valve_count) {
-            valve_array[valveIndex]->toggle();
+            valves[valveIndex]->toggle();
             Serial.println("abriendo ");
-            server.send(200, "text/plain", valve_array[valveIndex]->getState() ? "ON" : "OFF");
+            server.send(200, "text/plain", valves[valveIndex]->getState() ? "ON" : "OFF");
             return;
         }
     }

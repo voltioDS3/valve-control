@@ -11,4 +11,5 @@ extern Valve valve1;
 extern Valve valve2;
 extern Valve valve3;
 extern Valve valve4;
+extern Valve* valves[4];
 #endif
