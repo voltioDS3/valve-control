@@ -27,5 +27,6 @@ void setup() {
 void loop() {
   runServer();
   // put your main code here, to run repeatedly:
+  Serial.println(valve1.getState());
 }
 
