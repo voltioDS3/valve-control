@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" class="js-focus-visible">
+<head>
+    <title>Valvulas</title>
+</head>
+  <style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Arial', sans-serif; /* Cambia la tipografía */
+        color: #FFFFFF; /* Texto claro */
+    }
+    header {
+        width: 100%;
+        height: 5vh;
+        color: #131515; /* Texto oscuro */
+        text-align: center;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        padding: 15px 0;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    .main {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #valve-buttons-container{
+        margin-top: 20px;
+        
+        display: flex;
+        flex-direction: column;
+        align-self: center;
+        width: 80%; 
+    }
+    .button {
+        
+        background-color: #5c9a72;
+        color: #131515;
+        border: none;
+        padding: 10px 20px;
+        margin: 5px;
+        font-size: 2rem;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .button:hover {
+        background-color: #5c9a72;
+    }
+    .button.on {
+        background-color: #7CEA9C;
+    }
+    
+  </style>
+
+  <body style="background-color: #131515" onload="loadButtons()">
+    <header style="background-color: #7CEA9C">
+        <h1>CONTROL VALVULAS</h1>
+    </header>
+
+    <div class="main">
+        <div id="valve-buttons-container">
+
+        </div>
+    </div>
+    
+  </body>
+
+  <script type="text/javascript">
+    // Respuesta simulada para válvulas
+    const simulatedResponse = {
+        valve_count: 3, // Número de válvulas simuladas
+        states: [false, true, false] // Estados iniciales de las válvulas
+    };
+
+    // Función que carga los botones
+    const loadButtons = () => {
+        const data = simulatedResponse;
+        const valveContainer = document.getElementById("valve-buttons-container");
+
+        // Limpiar los botones antes de recargarlos
+        valveContainer.innerHTML = "";
+
+        for (let i = 0; i < data.valve_count; i++) {
+            const button = document.createElement('button');
+            button.className = `button ${data.states[i] ? "on" : ""}`;
+            button.textContent = `Válvula ${i + 1}`;
+            
+            // Al hacer clic en el botón, cambiamos el estado de la válvula
+            button.onclick = () => {
+                // Cambiar el estado (toggle)
+                data.states[i] = !data.states[i];
+
+                // Actualizar el estilo del botón
+                button.className = `button ${data.states[i] ? "on" : ""}`;
+
+                // Aquí podrías hacer una petición al servidor para cambiar el estado real
+                var xhr = new XMLHttpRequest();
+                xhr.open()
+                xhr.open("GET", `/valveToggle?valve=${i}`);
+                alert(`Valvula ${i + 1} esta ahora ${data.states[i] ? "ON" : "OFF"}`);
+            };
+            valveContainer.appendChild(button);
+        }
+    };
+  </script>
+</html>
