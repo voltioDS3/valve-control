@@ -88,7 +88,7 @@ void loop() {
 
   if(millis() - last_valve_check > valve_check_interval){
       for(int i=0; i<VALVE_COUNT;i++){
-        
+        valves[i]->checkSchedules();
       }
   }
   printLocalTime();
