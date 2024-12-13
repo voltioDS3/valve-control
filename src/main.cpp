@@ -92,7 +92,7 @@ void loop() {
       for(int i=0; i<VALVE_COUNT;i++){
         valves[i]->checkSchedules();
       }
-      
+    last_valve_check = millis();
   }
   
 
