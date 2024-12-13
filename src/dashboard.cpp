@@ -56,11 +56,38 @@ void handleScheduleValve(){
     }
     server.send(400, "text/plain", "Invalid valve index");
 }
+
+void handleSchedulesStates(){
+    DynamicJsonDocument doc(200);
+    for(int i = 0; i<VALVE_COUNT;i++){
+        JsonArray valveSchedules= doc.createNestedArray(i);
+        int schedule_count = valves[i]->getScheduleCount();
+        Schedule* schedules = valves[i]->getSchedules();
+        for(int j = 0; j<schedule_count;j++){
+            JsonObject scheduleObject = valveSchedules.createNestedObject();
+            scheduleObject["day"] = schedules[j].day;
+            scheduleObject["hour"] = schedules[j].hour;
+            scheduleObject["minute"] = schedules[j].minute;
+            scheduleObject["is_on"] = schedules[j].is_on;
+
+            Serial.println("lol");
+            
+        }
+    }
+    String jsonResponse;
+    serializeJson(doc, jsonResponse);
+    Serial.println(jsonResponse);
+    server.send(200, "application/json", jsonResponse);
+    
+
+
+}
 void setupWebServer(){
     server.on("/", renderDashboard );
     server.on("/valveStates", handleValveStates);
     server.on("/toggleValve", handleToggleValve);
     server.on("/scheduleValve", handleScheduleValve);
+    server.on("/schedulesStates", handleSchedulesStates);
     server.begin();
     Serial.println("Server started");
 

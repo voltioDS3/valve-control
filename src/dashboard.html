@@ -164,6 +164,18 @@
         };
     };
 
+    const loadSchedules = async () =>{
+            const response = await fetch("/schedulesStates");
+            const data = await response.json();
+            const scheduleContainer = document.getElementById("valve-schedules-container");
+            let valve_count = data.lengt
+            for(let i = 0; i< valve_count; i++){
+                
+            }
+
+        }
+
+
     const scheduleValve = () =>{
         const day = document.getElementById("days").value;
         const valve = document.getElementById("valve").value;

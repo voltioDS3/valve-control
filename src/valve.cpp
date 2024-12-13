@@ -44,3 +44,11 @@ struct tm timeinfo;
   }
   
 }
+
+int Valve::getScheduleCount(){
+    return m_schedule_count;
+}
+
+Schedule* Valve::getSchedules(){
+    return m_schedules;
+}
