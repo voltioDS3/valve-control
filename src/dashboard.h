@@ -80,6 +80,41 @@ const char PAGE_MAIN[] PROGMEM = R"=====(
         <div id="valve-buttons-container">
 
         </div>
+        <div class="scheduler-container">
+            <div class="valve-scheduler">
+                <div class="scheduler-container">
+                    <h2>Programar Riego</h2>
+                    <label for="valve">Valvula:</label>
+                    <select id="valve">
+                        
+                    </select>
+                    <label for="days">Día:</label>
+                    <select id="days">
+                        <option value="7">Todos los dias</option>
+                        <option value="1">Lunes</option>
+                        <option value="2">Martes</option>
+                        <option value="3">Miércoles</option>
+                        <option value="4">Jueves</option>
+                        <option value="5">Viernes</option>
+                        <option value="6">Sábado</option>
+                        <option value="0">Domingo</option>
+                    </select>
+        
+                    <label for="hour">Hora:</label>
+                    <input type="number" id="hour" min="0" max="23" placeholder="Hora (0-23)">
+        
+                    <label for="minute">Minuto:</label>
+                    <input type="number" id="minute" min="0" max="59" placeholder="Minuto (0-59)">
+                    
+                    <label for="action">Accion:</label>
+                    <select id="action">
+                        <option value="1">Prender</option>
+                        <option value="0">Apagar</option>
+                    </select>
+                    <button class="submit-schedule" onclick="scheduleValve()">Programar</button>
+                </div>
+            </div>
+        </div>
     </div>
     
   </body>
@@ -89,13 +124,18 @@ const char PAGE_MAIN[] PROGMEM = R"=====(
             const response = await fetch("/valveStates");
             const data = await response.json();
             const valveContainer = document.getElementById("valve-buttons-container");
-
+            const valve_selection = document.getElementById("valve");
             valveContainer.innerHTML = "";
-
+            valve_selection.innerHTML = "";
             for (let i = 0; i < data.valve_count; i++) {
                 const button = document.createElement('button');
                 button.className = `button ${data.states[i] ? "on" : ""}`;
                 button.textContent = `Valvula ${i + 1}`;
+                
+                const option = document.createElement("option")
+                option.value = `${i}`; // Asignar el valor
+                option.textContent = `Valvula ${i+1}`; 
+                valve_selection.appendChild(option);
                 
                 // Al hacer clic en el botón, cambiamos el estado de la válvula
                 button.onclick = () => {
@@ -114,6 +154,23 @@ const char PAGE_MAIN[] PROGMEM = R"=====(
                 valveContainer.appendChild(button);
             }
         };
+
+        const scheduleValve = () =>{
+        const day = document.getElementById("days").value;
+        const valve = document.getElementById("valve").value;
+        const hour = document.getElementById("hour").value;
+        const min = document.getElementById("minute").value;
+        const action = document.getElementById("action").value;
+        if (hour === "" || minute === "") {
+            alert("Por favor, ingresa una hora y un minuto válidos.");
+            return;
+        }
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", `/scheduleValve?day=${day}&hour=${hour}&minute=${minute}&valve=${valve}&action=${action}`);
+        xhr.send();
+        alert(`Riego programado !`);
+    }
 
     window.onload = loadButtons;
 
