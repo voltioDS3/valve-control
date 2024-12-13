@@ -1,6 +1,6 @@
 #include "main.h"
 
-char XML[2048];
+
 Valve valve1(1,19 , false);
 Valve valve2(2,18 , false);
 Valve valve3(3,5 , false);
@@ -9,6 +9,7 @@ Valve* valves[4] = {&valve1, &valve2, &valve3, &valve4};
 
 
 void syncRTC();
+
 void setup() {
   Serial.begin(115200);
   setupWifi();  
@@ -87,11 +88,13 @@ void loop() {
   }
 
   if(millis() - last_valve_check > valve_check_interval){
+    printLocalTime();
       for(int i=0; i<VALVE_COUNT;i++){
         valves[i]->checkSchedules();
       }
+      
   }
-  printLocalTime();
+  
 
 }
 

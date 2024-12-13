@@ -24,9 +24,7 @@ void handleValveStates(){
     server.send(200, "application/json", jsonResponse);
 }
 
-void handleValveSchedule(){
-    
-}
+
 void handleToggleValve() {
     if (server.hasArg("valve")) {
         int valveIndex = server.arg("valve").toInt();
@@ -39,10 +37,30 @@ void handleToggleValve() {
     }
     server.send(400, "text/plain", "Invalid valve index");
 }
+
+void handleScheduleValve(){
+    if (server.hasArg("valve") &&  server.hasArg("hour") && server.hasArg("minute")&& server.hasArg("day") && server.hasArg("action")) {
+        int valveIndex = server.arg("valve").toInt();
+        int is_on = server.arg("action").toInt();
+        int hour = server.arg("hour").toInt();
+        int minute = server.arg("minute").toInt();
+        int day = server.arg("day").toInt();
+
+        if (valveIndex >= 0 && valveIndex < valve_count) {
+            valves[valveIndex]->addSchedule(day,hour, minute, is_on);
+            Serial.print("schedulando valvula");
+            Serial.println(valveIndex);
+            server.send(200, "text/plain", "bien");
+            return;
+        }
+    }
+    server.send(400, "text/plain", "Invalid valve index");
+}
 void setupWebServer(){
     server.on("/", renderDashboard );
     server.on("/valveStates", handleValveStates);
     server.on("/toggleValve", handleToggleValve);
+    server.on("/scheduleValve", handleScheduleValve);
     server.begin();
     Serial.println("Server started");
 
@@ -58,3 +76,4 @@ void toggleDashboard(){
     valve_array[0]->toggle();
     delay(5000);
 }
+

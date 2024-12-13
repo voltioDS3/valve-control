@@ -26,6 +26,7 @@
     .main {
         display: flex;
         flex-direction: column;
+        
     }
 
     #valve-buttons-container{
@@ -54,6 +55,14 @@
     .button.on {
         background-color: #7CEA9C;
     }
+    .scheduler-container{
+        display: flex;
+        flex-direction: column;
+        width: 80%;
+
+        align-self: center;
+        
+    }
     
   </style>
 
@@ -65,6 +74,43 @@
     <div class="main">
         <div id="valve-buttons-container">
 
+        </div>
+        <div class="scheduler-container">
+            <div class="valve-scheduler">
+                <div class="scheduler-container">
+                    <h2>Programar Riego</h2>
+                    <label for="valve">Valvula:</label>
+                    <select id="valve">
+                        <option value="1">Valvula 1</option>
+                        <option value="2">Valvula 2</option>
+                        <option value="3">Valvula 3</option>
+                    </select>
+                    <label for="days">Día:</label>
+                    <select id="days">
+                        <option value="7">Todos los días</option>
+                        <option value="1">Lunes</option>
+                        <option value="2">Martes</option>
+                        <option value="3">Miércoles</option>
+                        <option value="4">Jueves</option>
+                        <option value="5">Viernes</option>
+                        <option value="6">Sábado</option>
+                        <option value="0">Domingo</option>
+                    </select>
+        
+                    <label for="hour">Hora:</label>
+                    <input type="number" id="hour" min="0" max="23" placeholder="Hora (0-23)">
+        
+                    <label for="minute">Minuto:</label>
+                    <input type="number" id="minute" min="0" max="59" placeholder="Minuto (0-59)">
+                    
+                    <label for="action">Accion:</label>
+                    <select id="action">
+                        <option value="1">Prender</option>
+                        <option value="2">Apagar</option>
+                    </select>
+                    <button class="submit-schedule" onclick="scheduleValve()">Programar</button>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -90,7 +136,10 @@
             button.className = `button ${data.states[i] ? "on" : ""}`;
             button.textContent = `Válvula ${i + 1}`;
             
-            // Al hacer clic en el botón, cambiamos el estado de la válvula
+            const option = document.createElement("option")
+            option.value = `${i}`; // Asignar el valor
+            option.textContent = `Valvula ${i+1}`; // Asignar el texto visible 
+                       // Al hacer clic en el botón, cambiamos el estado de la válvula
             button.onclick = () => {
                 // Cambiar el estado (toggle)
                 data.states[i] = !data.states[i];
@@ -107,5 +156,31 @@
             valveContainer.appendChild(button);
         }
     };
+    const loadScheduler = () =>{
+        const scheduler_container = document.getElementById("scheduler-container");
+        scheduler_container.innerHTML = "";
+        for (let i = 0; i<data.valve_count;i++){
+            
+        };
+    };
+
+    const scheduleValve = () =>{
+        const day = document.getElementById("days").value;
+        const valve = document.getElementById("valve").value;
+        const hour = document.getElementById("hour").value;
+        const min = document.getElementById("minute").value;
+        const action = document.getElementById("action").value;
+        if (hour === "" || minute === "") {
+            alert("Por favor, ingresa una hora y un minuto válidos.");
+            return;
+        }
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", `/scheduleValve?day=${day}&hour=${hour}&minute=${minute}`);
+        xhr.send();
+        alert(`Riego programado !`);
+    }
+
+
   </script>
 </html>
