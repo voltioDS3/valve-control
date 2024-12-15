@@ -11,12 +11,15 @@ Valve* valves[4] = {&valve1, &valve2, &valve3, &valve4};
 void syncRTC();
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
+  for (int i = 0; i< VALVE_COUNT;i++){
+    valves[i]->updateFromFlash();
+  }
   setupWifi();  
   setupWebServer();
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   syncRTC();
-  
+
   pinMode(VALVE1_PIN,OUTPUT);
   pinMode(VALVE2_PIN,OUTPUT);
   pinMode(VALVE3_PIN,OUTPUT);

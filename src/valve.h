@@ -4,6 +4,8 @@
 #include <vector>
 #include "schedule.h"
 #include <time.h>
+#include <Preferences.h>
+
 class Valve{
     private:
         int m_number;
@@ -20,6 +22,7 @@ class Valve{
         void checkSchedules();
         int getScheduleCount();
         Schedule* getSchedules();
+        void updateFromFlash();
 
 };
 #endif
