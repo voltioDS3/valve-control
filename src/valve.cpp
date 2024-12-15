@@ -22,26 +22,48 @@ void Valve::addSchedule(int day, int hour, int minute, bool is_on){
 }   
 
 void Valve::checkSchedules(){
+Schedule nearest_schedule = m_schedules[0];
 struct tm timeinfo;
   if(!getLocalTime(&timeinfo)){
     Serial.println("Failed to obtain time");
     return;
   }
-  for(int i = 0; i<=m_schedule_count;i++){
+
+  for(int i = 0; i<m_schedule_count;i++){
     Schedule schedule = m_schedules[i];
-    if (schedule.day == timeinfo.tm_wday){
-        if(schedule.hour>= timeinfo.tm_hour){
-            if(schedule.minute >= timeinfo.tm_min){
-                m_is_on = schedule.is_on;
-                digitalWrite(m_pin, m_is_on);
+    Serial.print("comparando  valvula: ");
+    Serial.print(m_number);
+    Serial.print("\n");
+    Serial.println(schedule.day);
+    Serial.println(timeinfo.tm_wday);
+    if (schedule.day == timeinfo.tm_wday || schedule.day == 7){
+        int nearest_day_minutes = nearest_schedule.hour*60 + nearest_schedule.minute;
+        int schedule_day_minutes = schedule.hour*60 + schedule.minute;
+        int time_day_minutes = timeinfo.tm_hour*60 + timeinfo.tm_min;
+        int minute_difference = time_day_minutes-schedule_day_minutes;
+        
+        Serial.println("son el mismo dia");
+        if (minute_difference < 0){
+            continue;
+        } else{
+            int nearest_schedule_minute_difference = time_day_minutes-nearest_day_minutes;
+            if (abs(nearest_schedule_minute_difference) > abs(minute_difference) ){
+                Serial.println("cambio nearest schedule");
+                Serial.println(abs(nearest_schedule_minute_difference));
+                 Serial.println(abs(minute_difference));
+                nearest_schedule = schedule;
             }
-        }else{
-            break;
         }
+        
     }else{
-        break;
+        continue;
     }
   }
+    if(nearest_schedule.day != -1){
+        m_is_on = nearest_schedule.is_on;
+        digitalWrite(m_pin, nearest_schedule.is_on);
+
+    }
   
 }
 

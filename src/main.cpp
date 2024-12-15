@@ -16,6 +16,7 @@ void setup() {
   setupWebServer();
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   syncRTC();
+  
   pinMode(VALVE1_PIN,OUTPUT);
   pinMode(VALVE2_PIN,OUTPUT);
   pinMode(VALVE3_PIN,OUTPUT);

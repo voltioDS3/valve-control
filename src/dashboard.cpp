@@ -70,7 +70,7 @@ void handleSchedulesStates(){
             scheduleObject["minute"] = schedules[j].minute;
             scheduleObject["is_on"] = schedules[j].is_on;
 
-            Serial.println("lol");
+            
             
         }
     }

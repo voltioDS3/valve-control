@@ -8,4 +8,5 @@ typedef struct
     bool is_on;
 }Schedule;
 
+
 #endif

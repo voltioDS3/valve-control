@@ -3,7 +3,9 @@ static WiFiManager wm;
 void setupWifi(){
     WiFi.mode(WIFI_STA);
     bool res;
-    res = wm.autoConnect("AutoConnectAP", "password");
+
+    res = wm.autoConnect("ESP32", "password");
+    
     if(!res){
         Serial.println("could not connect");
     }
