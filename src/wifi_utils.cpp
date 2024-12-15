@@ -23,4 +23,10 @@ void setupWifi(){
         Serial.print(".");
     }
     Serial.print("IP address: "); Serial.println(WiFi.localIP());
+     if (MDNS.begin("valvulas")) { // Replace "myesp32" with your desired hostname
+        Serial.println("mDNS responder started");
+        Serial.println("You can now access the ESP32 at: http://valvulas.local");
+    } else {
+        Serial.println("Error setting up mDNS responder");
+    }
 }
