@@ -9,7 +9,7 @@
 #define VALVE3_PIN  5 
 #define VALVE4_PIN  17
 #define VALVE_COUNT 4
-
+#define DEBUG 1
 extern Valve valve1;
 extern Valve valve2;
 extern Valve valve3;

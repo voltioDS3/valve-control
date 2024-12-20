@@ -23,17 +23,37 @@ void handleRemoveSchedule(){
         sprintf(valve_name, "valvula_%d", valveIndex+1);
 
         if (preferences.begin(valve_name, false)) {
+            #ifdef DEBUG
             Serial.println("Preferences opened");
+            #endif
         } else {
+            #ifdef DEBUG
             Serial.println("Failed to open preferences");
+            #endif
             return;
         }
         int schedule_count = preferences.getInt("schedule_count");
         
+        char schedule_to_remove[20];
+        sprintf(schedule_to_remove, "%d;%d;%d;%d", minute,hour,day,is_on);
+
         for (int i = 0; i < schedule_count; i++){
             char schedule_name[20];
             sprintf(schedule_name,"schedule_%d", i);
-            preferences.getString(schedule_name);
+            String schedule_string = preferences.getString(schedule_name);
+            #ifdef DEBUG
+            Serial.print("el horario leido de la flash es: ");
+            Serial.println(schedule_string);
+
+            Serial.print("el horario a comparar es: ");
+            Serial.println(schedule_to_remove);
+            #endif
+            if (schedule_string == schedule_to_remove){
+                #ifdef DEBUG
+                Serial.println("MATCH");
+                #endif
+            }
+
         }
         
 
@@ -50,9 +70,11 @@ void handleValveStates(){
     doc["valve_count"] = valve_count;
     JsonArray states = doc.createNestedArray("states");
     for (int i = 0; i < valve_count; i++) {
+        #ifdef DEBUG
         Serial.print("valvula ");
         Serial.print(i);
         Serial.print(valves[i]->getState());
+        #endif
         states.add(valves[i]->getState());
     }
     String jsonResponse;
@@ -66,7 +88,9 @@ void handleToggleValve() {
         int valveIndex = server.arg("valve").toInt();
         if (valveIndex >= 0 && valveIndex < valve_count) {
             valves[valveIndex]->toggle();
+            #ifdef DEBUG
             Serial.println("abriendo ");
+            #endif
             server.send(200, "text/plain", valves[valveIndex]->getState() ? "ON" : "OFF");
             return;
         }
@@ -84,8 +108,10 @@ void handleScheduleValve(){
 
         if (valveIndex >= 0 && valveIndex < valve_count) {
             valves[valveIndex]->addSchedule(day,hour, minute, is_on);
+            #ifdef DEBUG
             Serial.print("schedulando valvula");
             Serial.println(valveIndex);
+            #endif
             server.send(200, "text/plain", "bien");
             return;
         }
@@ -110,7 +136,9 @@ void handleSchedulesStates(){
     }
     String jsonResponse;
     serializeJson(doc, jsonResponse);
+    #ifdef DEBUG
     Serial.println(jsonResponse);
+    #endif
     server.send(200, "application/json", jsonResponse);
     
 
@@ -124,8 +152,9 @@ void setupWebServer(){
     server.on("/schedulesStates", handleSchedulesStates);
     server.on("/removeSchedule", handleRemoveSchedule);
     server.begin();
+    #ifdef DEBUG
     Serial.println("Server started");
-
+    #endif
 }
 
 
@@ -134,7 +163,9 @@ void runServer(){
 }
 
 void toggleDashboard(){
+    #ifdef DEBUG
     Serial.println("intento cambiar desde dashboard");
+    #endif
     valve_array[0]->toggle();
     delay(5000);
 }
