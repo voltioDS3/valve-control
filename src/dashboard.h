@@ -186,36 +186,67 @@ const char PAGE_MAIN[] PROGMEM = R"=====(
             valveContainer.appendChild(button);
         }
     };
-        const loadSchedules = async () =>{
-            const response = await fetch("/schedulesStates");
-            const data = await response.json();
-            const scheduleContainer = document.getElementById("valve-schedules-container");
-            const valveKeys = Object.keys(data); // Obtén las claves del objeto
-            const valveCount = valveKeys.length; // Número de válvulas
+        const loadSchedules = async () => {
+    const response = await fetch("/schedulesStates");
+    const data = await response.json();
+    const scheduleContainer = document.getElementById("valve-schedules-container");
+    const valveKeys = Object.keys(data); // Obtén las claves del objeto
+    const valveCount = valveKeys.length; // Número de válvulas
 
-            console.log(`Numero de válvulas: ${valveCount}`);
-          
-            for(let i = 0; i<= valveCount; i++){
-                 const valveName = valveKeys[i]; // Nombre de la válvula actual
-            const schedules = data[valveName]; // Contenido de la válvula (array de horarios)
+    console.log(`Numero de válvulas: ${valveCount}`);
 
-            console.log(`Horarios de ${valveName}:`, schedules);
+    for (let i = 0; i < valveCount; i++) { // Cambiar `i <= valveCount` a `i < valveCount`
+        const valveName = valveKeys[i]; // Nombre de la válvula actual
+        const schedules = data[valveName]; // Contenido de la válvula (array de horarios)
 
-            // Ejemplo: Mostrar horarios en el DOM
-            const valveElement = document.createElement("div");
-            valveElement.innerHTML = `<h3> Valvula ${Number(valveName)+1}</h3><ul></ul>`;
-            const scheduleList = valveElement.querySelector("ul");
+        console.log(`Horarios de ${valveName}:`, schedules);
 
-            schedules.forEach(schedule => {
-                const scheduleItem = document.createElement("li");
-                scheduleItem.textContent = `Dia: ${day_dictionary[schedule.day]}, Hora: ${schedule.hour}, Minuto: ${schedule.minute}, accion: ${schedule.is_on  ? "Prender" : "Apagar"}`;
-                scheduleList.appendChild(scheduleItem);
-            });
+        // Crear contenedor para la válvula
+        const valveElement = document.createElement("div");
+        valveElement.innerHTML = `<h3> Valvula ${Number(valveName) + 1}</h3><ul></ul>`;
+        const scheduleList = valveElement.querySelector("ul");
 
-            scheduleContainer.appendChild(valveElement);
+        // Generar elementos de horario con botón de eliminación
+        schedules.forEach((schedule, index) => {
+            const scheduleItem = document.createElement("li");
+            scheduleItem.innerHTML = `
+                Dia: ${day_dictionary[schedule.day]}, Hora: ${schedule.hour}, Minuto: ${schedule.minute}, Accion: ${schedule.is_on ? "Prender" : "Apagar"}
+                <button class="remove-schedule" data-valve="${valveName}" data-index="${index}" data-day="${schedule.day}" data-hour="${schedule.hour}" data-minute="${schedule.minute}" data-is-on="${schedule.is_on}">X</button>
+            `;
+            scheduleList.appendChild(scheduleItem);
+        });
+
+        scheduleContainer.appendChild(valveElement);
+    }
+
+    // Agregar eventos a los botones de eliminación
+    scheduleContainer.addEventListener("click", async (event) => {
+        if (event.target.classList.contains("remove-schedule")) {
+            const button = event.target;
+            const valve = button.dataset.valve;
+            const day = button.dataset.day;
+            const hour = button.dataset.hour;
+            const minute = button.dataset.minute;
+            const isOn = button.dataset.isOn;
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", `/removeSchedule?valve=${valve}&day=${day}&hour=${hour}&minute=${minute}&is_on=${isOn}`);
+                xhr.send();
+                xhr.onload = () => {
+                    if (xhr.status === 200) {
+                        console.log("Horario eliminado correctamente.");
+                        // Opcional: remover el elemento del DOM
+                        button.parentElement.remove();
+                    } else {
+                        console.error("Error al eliminar el horario:", xhr.responseText);
+                    }
+                };
+            } catch (error) {
+                console.error("Error en la solicitud:", error);
             }
-
         }
+    });
+};
 
         const scheduleValve = () =>{
         const day = document.getElementById("days").value;

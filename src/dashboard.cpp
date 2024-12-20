@@ -9,6 +9,42 @@ void renderDashboard(){
     server.send(200, "text/html", PAGE_MAIN);
 }
 
+void handleRemoveSchedule(){
+    if (server.hasArg("valve") &&  server.hasArg("hour") && server.hasArg("minute")&& server.hasArg("day") && server.hasArg("isOn")) {
+
+        int valveIndex = server.arg("valve").toInt();
+        int is_on = server.arg("isOn").toInt();
+        int hour = server.arg("hour").toInt();
+        int minute = server.arg("minute").toInt();
+        int day = server.arg("day").toInt();
+
+        Preferences preferences;
+        char valve_name[20]; 
+        sprintf(valve_name, "valvula_%d", valveIndex+1);
+
+        if (preferences.begin(valve_name, false)) {
+            Serial.println("Preferences opened");
+        } else {
+            Serial.println("Failed to open preferences");
+            return;
+        }
+        int schedule_count = preferences.getInt("schedule_count");
+        
+        for (int i = 0; i < schedule_count; i++){
+            char schedule_name[20];
+            sprintf(schedule_name,"schedule_%d", i);
+            preferences.getString(schedule_name);
+        }
+        
+
+   
+
+        
+        preferences.end();
+
+    }
+}
+
 void handleValveStates(){
     StaticJsonDocument<200> doc;
     doc["valve_count"] = valve_count;
@@ -69,9 +105,7 @@ void handleSchedulesStates(){
             scheduleObject["hour"] = schedules[j].hour;
             scheduleObject["minute"] = schedules[j].minute;
             scheduleObject["is_on"] = schedules[j].is_on;
-
-            
-            
+                        
         }
     }
     String jsonResponse;
@@ -88,6 +122,7 @@ void setupWebServer(){
     server.on("/toggleValve", handleToggleValve);
     server.on("/scheduleValve", handleScheduleValve);
     server.on("/schedulesStates", handleSchedulesStates);
+    server.on("/removeSchedule", handleRemoveSchedule);
     server.begin();
     Serial.println("Server started");
 
