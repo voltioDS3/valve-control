@@ -137,3 +137,51 @@ void Valve::updateFromFlash(){
     }
     preferences.end();
 }
+
+void Valve::removeSchedule(String schedule_to_remove){
+    Preferences preferences;
+    char valve_name[20]; 
+    sprintf(valve_name, "valvula_%d", m_number);
+
+    if (preferences.begin(valve_name, false)) {
+        #ifdef DEBUG
+        Serial.println("Preferences opened");
+        #endif
+    } else {
+        #ifdef DEBUG
+        Serial.println("Failed to open preferences");
+        #endif
+        return;
+    }
+
+
+    for (int i = 0; i < m_schedule_count; i++){
+        char schedule_name[20];
+        sprintf(schedule_name,"schedule_%d", i);
+        String schedule_string = preferences.getString(schedule_name);
+        #ifdef DEBUG
+        Serial.print("el horario leido de la flash es: ");
+        Serial.println(schedule_string);
+
+        Serial.print("el horario a comparar es: ");
+        Serial.println(schedule_to_remove);
+        #endif
+        if (schedule_string == schedule_to_remove){
+            #ifdef DEBUG
+            Serial.println("MATCH");
+            // here would be the code to delete said schedule
+            #endif
+
+            preferences.remove(schedule_name);
+            m_schedules[i] = {-1,-1,-1,-1};
+        }
+
+    }
+    
+
+
+
+    
+    preferences.end();
+
+}

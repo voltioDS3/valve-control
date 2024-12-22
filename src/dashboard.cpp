@@ -18,50 +18,12 @@ void handleRemoveSchedule(){
         int minute = server.arg("minute").toInt();
         int day = server.arg("day").toInt();
 
-        Preferences preferences;
-        char valve_name[20]; 
-        sprintf(valve_name, "valvula_%d", valveIndex+1);
 
-        if (preferences.begin(valve_name, false)) {
-            #ifdef DEBUG
-            Serial.println("Preferences opened");
-            #endif
-        } else {
-            #ifdef DEBUG
-            Serial.println("Failed to open preferences");
-            #endif
-            return;
-        }
-        int schedule_count = preferences.getInt("schedule_count");
-        
         char schedule_to_remove[20];
         sprintf(schedule_to_remove, "%d;%d;%d;%d", minute,hour,day,is_on);
 
-        for (int i = 0; i < schedule_count; i++){
-            char schedule_name[20];
-            sprintf(schedule_name,"schedule_%d", i);
-            String schedule_string = preferences.getString(schedule_name);
-            #ifdef DEBUG
-            Serial.print("el horario leido de la flash es: ");
-            Serial.println(schedule_string);
-
-            Serial.print("el horario a comparar es: ");
-            Serial.println(schedule_to_remove);
-            #endif
-            if (schedule_string == schedule_to_remove){
-                #ifdef DEBUG
-                Serial.println("MATCH");
-                #endif
-            }
-
-        }
+        valves[valveIndex]->removeSchedule(schedule_to_remove);
         
-
-   
-
-        
-        preferences.end();
-
     }
 }
 

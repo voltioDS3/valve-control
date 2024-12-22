@@ -17,7 +17,7 @@ class Valve{
     public:
         Valve(int number, int pin, bool is_on);
         void addSchedule(int day, int hour, int minute, bool is_on);
-        void removeSchedule(int scheduleId);
+        void removeSchedule(String scheduleId);
         void toggle();
         bool getState();
         void checkSchedules();
